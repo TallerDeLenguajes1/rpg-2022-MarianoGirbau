@@ -50,6 +50,13 @@ namespace RPG
         public int Nivel { get => nivel; set => nivel = value; }
         public int Armadura { get => armadura; set => armadura = value; }
 
-
+        //Datos Batalla
+        public void datosBatalla(){
+            Random rnd = new Random();
+            float PoderDeDisparo = Destreza * Fuerza * Nivel;
+            int EfectividadDeDisparo = rnd.Next(1,101);
+            float ValorDeAtaque = PoderDeDisparo * EfectividadDeDisparo;
+            float PoderDeDefensa = Armadura * Velocidad;
+        }
     }
 }
