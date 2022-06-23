@@ -32,11 +32,11 @@ namespace RPG
         private int fuerza;         //1 a 10
         private int armadura;       //1 a 10
 
-        public Personaje()
+       /* public Personaje()
         {
             Nivel = 1;
             Salud = 100;
-        }
+        }*/
 
         public TipoDeClase Clase { get => clase; set => clase = value; }
         public string? Nombre { get => nombre; set => nombre = value; }
@@ -50,13 +50,31 @@ namespace RPG
         public int Nivel { get => nivel; set => nivel = value; }
         public int Armadura { get => armadura; set => armadura = value; }
 
+        //Mostrar personaje
+        public void mostrarPersonaje()
+        {
+            Console.WriteLine("Nombre: " + nombre);
+            Console.WriteLine("Apodo: " + apodo);
+            Console.WriteLine("Nivel: " + nivel);
+            Console.WriteLine("Fecha de Nacimiento: " + (fechadeNacimiento).ToShortDateString());
+            Console.WriteLine("Edad: " + edad);
+            Console.WriteLine("Clase: " + clase.ToString());
+            Console.WriteLine("Salud: " + salud);
+            Console.WriteLine("Velocidad: " + velocidad);
+            Console.WriteLine("Destreza: " + destreza);
+            Console.WriteLine("Fuerza: " + fuerza);
+            Console.WriteLine("Armadura: " + armadura);
+        } 
+
         //Datos Batalla
-        public void datosBatalla(){
+        public void Batalla(Personaje PJ2){
+
             Random rnd = new Random();
             float PoderDeDisparo = Destreza * Fuerza * Nivel;
             int EfectividadDeDisparo = rnd.Next(1,101);
             float ValorDeAtaque = PoderDeDisparo * EfectividadDeDisparo;
             float PoderDeDefensa = Armadura * Velocidad;
+            
         }
     }
 }

@@ -8,15 +8,22 @@ namespace MyProgram {
             List<Personaje> Participantes = new List<Personaje>();
 
             //Carga de Personajes
+            Console.WriteLine("\n##### Participantes #####");
             for (int i = 1; i < cantidadParticipantes; i++)
             {
                 Personaje personaje = new Personaje();
                 personaje = creacionAleatoria();
                 Participantes.Add(personaje);
-                mostrarPersonaje(personaje);
+                personaje.mostrarPersonaje();
+                Console.WriteLine("####################");
             }
 
-
+            //Peleas
+            Console.WriteLine("\n##### Batallas #####");
+            for (int i = 1; i < (Participantes.Count)/2; i++)
+            {
+                
+            }
         }
 
         static Personaje creacionAleatoria()
@@ -45,20 +52,7 @@ namespace MyProgram {
             return personajeAux;
         }
 
-        static void mostrarPersonaje(Personaje PJ)
-        {
-            Console.WriteLine("Nombre: " + PJ.Nombre);
-            Console.WriteLine("Apodo: " + PJ.Apodo);
-            Console.WriteLine("Nivel: " + PJ.Nivel);
-            Console.WriteLine("Fecha de Nacimiento: " + (PJ.FechadeNacimiento).ToShortDateString());
-            Console.WriteLine("Edad: " + PJ.Edad);
-            Console.WriteLine("Clase: " + PJ.Clase.ToString());
-            Console.WriteLine("Salud: " + PJ.Salud);
-            Console.WriteLine("Velocidad: " + PJ.Velocidad);
-            Console.WriteLine("Destreza: " + PJ.Destreza);
-            Console.WriteLine("Fuerza: " + PJ.Fuerza);
-            Console.WriteLine("Armadura: " + PJ.Armadura);
-        } 
+  
 
     }
 }
