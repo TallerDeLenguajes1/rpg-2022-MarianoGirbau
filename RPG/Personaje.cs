@@ -15,13 +15,31 @@ namespace RPG
         ElfoOscuro
     }
 
+    public enum NombresEnum
+    {
+        Fulchard,
+        Taffy,
+        Serle,
+        Gylbart,
+        Louve
+        
+    }
+
+    public enum ApodosEnum
+    {
+        Sir,
+        Admiral,
+        Cardinal,
+        Prince,
+        Count 
+    }
 
     public class Personaje
     {
         //Datos        
         private TipoDeClase clase;  //clase o raza del personaje
-        private string? nombre;      //nombre del personaje
-        private string? apodo;       //apodo del personaje
+        private NombresEnum nombre;      //nombre del personaje
+        private ApodosEnum apodo;       //apodo del personaje
         private DateTime fechadeNacimiento;
         private int edad;           //entre 0 a 300
         private int salud;          //100
@@ -38,9 +56,15 @@ namespace RPG
             Salud = 100;
         }*/
 
+         public int TirarDodecaedro()
+        {
+            Random rnd = new Random();
+            return (rnd.Next(1, 13));
+        }
+
         public TipoDeClase Clase { get => clase; set => clase = value; }
-        public string? Nombre { get => nombre; set => nombre = value; }
-        public string? Apodo { get => apodo; set => apodo = value; }
+        public NombresEnum Nombre { get => nombre; set => nombre = value; }
+        public ApodosEnum Apodo { get => apodo; set => apodo = value; }
         public DateTime FechadeNacimiento { get => fechadeNacimiento; set => fechadeNacimiento = value; }
         public int Edad { get => edad; set => edad = value; }
         public int Salud { get => salud; set => salud = value; }
@@ -65,16 +89,7 @@ namespace RPG
             Console.WriteLine("Fuerza: " + fuerza);
             Console.WriteLine("Armadura: " + armadura);
         } 
+        
 
-        //Datos Batalla
-        public void Batalla(Personaje PJ2){
-
-            Random rnd = new Random();
-            float PoderDeDisparo = Destreza * Fuerza * Nivel;
-            int EfectividadDeDisparo = rnd.Next(1,101);
-            float ValorDeAtaque = PoderDeDisparo * EfectividadDeDisparo;
-            float PoderDeDefensa = Armadura * Velocidad;
-            
-        }
     }
 }
