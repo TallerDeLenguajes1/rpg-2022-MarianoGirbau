@@ -110,8 +110,8 @@ namespace RPG
         //Mostrar personaje
         public void mostrarPersonaje()
         {
-            Console.WriteLine("Nombre: " + nombre);
             Console.WriteLine("Apodo: " + apodo);
+            Console.WriteLine("Nombre: " + nombre);
             Console.WriteLine("Nivel: " + nivel);
             Console.WriteLine("Fecha de Nacimiento: " + (fechadeNacimiento).ToShortDateString());
             Console.WriteLine("Edad: " + edad);

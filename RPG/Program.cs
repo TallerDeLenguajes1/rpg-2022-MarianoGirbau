@@ -1,30 +1,21 @@
 ﻿using RPG;
+using System.Text.Json;
+using System.Net;
 namespace MyProgram {
     public class Program
     {
         public static void Main()
         {   
             MostrarHistorialGanadores();
-
-            int cantidadParticipantes=4;
-            List<Personaje> Participantes = new List<Personaje>();
-            //Carga de Personajes
-            Console.WriteLine("\n##### Participantes #####");
-            for (int i = 0; i < cantidadParticipantes; i++)
-            {
-                Personaje personaje = new Personaje();
-                personaje.creacionAleatoria();
-                Participantes.Add(personaje);
-                personaje.mostrarPersonaje();
-                Console.WriteLine("####################");
-            }
+            List<Personaje> Participantes = CargadoDeParticipantes();
+            PresionarTecla();
 
             //Peleas
             Console.WriteLine("\n##### Batallas #####");
             do
             {
                 List<Personaje> Ganadores = new List<Personaje>();
-                for (int j = 0; j <= (Participantes.Count)/2; j=j+2) //Batallas de a pares
+                for (int j = 0; j < Participantes.Count; j=j+2) //Batallas de a pares
                 {   
                     Personaje Ganador = Batalla(Participantes.ElementAt(j), Participantes.ElementAt(j + 1));
                     Ganador.Descansar(); //recupera vida y gana nivel
@@ -37,7 +28,9 @@ namespace MyProgram {
             var ganador = Participantes[0];
             Console.WriteLine($"{ganador.Apodo} {ganador.Nombre} !!!\n");
             PresionarTecla();
-            Console.WriteLine("###### Stats #####");
+            ObjetosApi();
+            PresionarTecla();
+            Console.WriteLine("\n###### Stats del Ganador ######");
             ganador.mostrarPersonaje();
 
             //Guardado de ganador
@@ -69,7 +62,7 @@ namespace MyProgram {
 
                 if (PJ2.Salud >= 0 && PJ1.Salud>= 0) //Para que no pegue si esta muerto
                 {
-                    float DA1 = (((ValorDeAtaque1 * EfectividadDeDisparo1) - PoderDeDefensa2) / MDP) * 10f;
+                    int DA1 = (int)(((ValorDeAtaque1 * EfectividadDeDisparo1) - PoderDeDefensa2) / MDP) * 10;
                     PJ2.Salud = (int)(PJ2.Salud - DA1);
                     if (DA1 > 0) 
                     {
@@ -93,7 +86,7 @@ namespace MyProgram {
 
                 if (PJ1.Salud >= 0 && PJ2.Salud >= 0) //Para que no pegue si esta muerto
                 {
-                    float DA2 = (((ValorDeAtaque2 * EfectividadDeDisparo2) - PoderDeDefensa1) / MDP) * 10f;
+                    float DA2 = (int)(((ValorDeAtaque2 * EfectividadDeDisparo2) - PoderDeDefensa1) / MDP) * 10;
                     PJ1.Salud = (int)(PJ1.Salud - DA2);
                     if (DA2 > 0)
                     {
@@ -186,6 +179,142 @@ namespace MyProgram {
                 TextoAMostrar = TextoAMostrar.Replace(";", "\t|");
                 Console.WriteLine(TextoAMostrar.Replace("%TAB", "\t"));
                 PresionarTecla();
+            }
+        }
+
+        /******************* Guardado y Creado de Participantes *********************/
+        static List<Personaje> CargadoDeParticipantes(){
+            List<Personaje> Participantes = new List<Personaje>();
+            string opcion;
+            if (File.Exists("jugadores.json"))
+            {
+                do
+                {
+                    Console.WriteLine("Ingrese una opción:");
+                    Console.WriteLine("\t[1] Cargar últimos luchadores");
+                    Console.WriteLine("\t[2] Generar nuevos luchadores");
+                    Console.Write("Esperando entrada: ");
+                    opcion = Console.ReadLine();
+                } while (opcion != "1" && opcion != "2");
+            }
+            else
+            {
+                opcion = "2";
+            }
+            switch (opcion)
+            {
+                case "1":
+                    //Carga de Participantes
+                    Participantes = CargarParticipantes();
+                    for (int i = 0; i < Participantes.Count; i++)
+                    {
+                        Participantes[i].mostrarPersonaje();
+                        Console.WriteLine("####################");
+                    }
+                    break;
+
+                case "2":
+                    Console.Write("\nIngrese la cantidad de participantes: ");
+                    int cantidadParticipantes = Convert.ToInt32(Console.ReadLine());
+                    Console.WriteLine("\n##### Participantes #####");
+                    for (int i = 0; i < cantidadParticipantes; i++)
+                    {
+                        Personaje personaje = new Personaje();
+                        personaje.creacionAleatoria();
+                        Participantes.Add(personaje);
+                        personaje.mostrarPersonaje();
+                        Console.WriteLine("####################");
+                    }
+            
+                    //Guardado de Participantes
+                    string ListaSerializadaAGuardar = JsonSerializer.Serialize(Participantes);
+                    HelperDeArchivos.GuardarArchivoJson("jugadores.json", ListaSerializadaAGuardar);
+                    break;
+
+                default:
+                    Console.WriteLine("ERROR 404 - NOT FOUND");
+                    break;
+            }
+            return Participantes;
+
+            
+        }
+
+         static List<Personaje> CargarParticipantes(){
+            string TextoLeido = HelperDeArchivos.AbrirArchivoJson("jugadores.json");
+            List<Personaje> Participantes = JsonSerializer.Deserialize<List<Personaje>>(TextoLeido);
+            Console.WriteLine($"Se cargaron {Participantes.Count} participantes");
+            return Participantes;
+         }
+        
+        /******************* Conexion al API *********************/
+         static void ObjetosApi(){
+            
+            Random rnd = new();
+            Root ObjetoMagico = new();
+            var Url = @"https://www.dnd5eapi.co/api/magic-items";
+            var Conexion = (HttpWebRequest)WebRequest.Create(Url);
+            Conexion.Method = "GET";
+            Conexion.ContentType = "application/json";
+            Conexion.Accept = "application/json";
+
+            try
+            {
+                using (WebResponse RespuestaWeb = Conexion.GetResponse())
+                {
+                    using (Stream StreamWeb = RespuestaWeb.GetResponseStream())
+                    {
+                        if (StreamWeb == null) return;
+                        using (StreamReader SR = new StreamReader(StreamWeb))
+                        {
+                            string TextoLeido = SR.ReadToEnd();
+                            ObjetoMagico = JsonSerializer.Deserialize<Root>(TextoLeido);
+
+                            //Elijo un objeto aleatorio de la lista dentro del root
+                            var Objeto=ObjetoMagico.ObjetosMagicos[rnd.Next(ObjetoMagico.ObjetosMagicos.Count)];
+                            var URLObjeto=Objeto.Url;
+                            var NombreObjeto=Objeto.Name;
+                            Console.WriteLine("TU PREMIO ES: " + NombreObjeto +@" \o/");
+
+                            //Descricpion de objeto
+
+                            Descripcion Desc = new();
+                            URLObjeto = @"https://www.dnd5eapi.co"+URLObjeto;
+                            var Conexion2 = (HttpWebRequest)WebRequest.Create(URLObjeto);
+                            Conexion2.Method = "GET";
+                            Conexion2.ContentType = "application/json";
+                            Conexion2.Accept = "application/json";
+
+                            try
+                            {
+                                using (WebResponse RespuestaWeb2 = Conexion2.GetResponse())
+                                {
+                                    using (Stream StreamWeb2 = RespuestaWeb2.GetResponseStream())
+                                    {
+                                        if (StreamWeb2 == null) return;
+                                        using (StreamReader SR2 = new StreamReader(StreamWeb2))
+                                        {
+                                            string TextoLeido2 = SR2.ReadToEnd();
+                                            Desc = JsonSerializer.Deserialize<Descripcion>(TextoLeido2);
+
+                                            Console.WriteLine("Tipo de objeto: " + Desc.Descripciones[0]);
+                                            Console.WriteLine("Descripcion: " + Desc.Descripciones[1]);
+
+                                        }
+                                    }
+                                }
+                            }
+                            catch (WebException Excepcion)
+                            {
+                                Console.WriteLine("Ups!" + Excepcion);
+                            }
+                        }
+                    }
+                }
+            }
+            catch (WebException Excepcion)
+            {
+                Console.WriteLine("Ups!" + Excepcion);
             }
         }
     }
