@@ -186,7 +186,7 @@ namespace MyProgram {
         static List<Personaje> CargadoDeParticipantes(){
             List<Personaje> Participantes = new List<Personaje>();
             string opcion;
-            if (File.Exists("jugadores.json"))
+            if (File.Exists("participantes.json"))
             {
                 do
                 {
@@ -228,7 +228,7 @@ namespace MyProgram {
             
                     //Guardado de Participantes
                     string ListaSerializadaAGuardar = JsonSerializer.Serialize(Participantes);
-                    HelperDeArchivos.GuardarArchivoJson("jugadores.json", ListaSerializadaAGuardar);
+                    HelperDeArchivos.GuardarArchivoJson("participantes.json", ListaSerializadaAGuardar);
                     break;
 
                 default:
